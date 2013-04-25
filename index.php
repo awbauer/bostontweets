@@ -1,0 +1,220 @@
+<html>
+	<head>
+	<title>Tweets from Boston</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+	<link href='http://fonts.googleapis.com/css?family=Noto+Serif:400,700' rel='stylesheet' type='text/css'>
+		<style>
+			body{
+				background-color: #2F252E;
+				font-family: 'Noto Serif', serif;
+				color: #E3CD7C;
+				text-align: center;
+				font-size:18px;
+			}
+			h1{
+				font-size:60px;
+				color: #B32C20;
+			}
+			#map-canvas{
+				color:#2F252E;
+			}
+			a{
+				color:#D0ECC3;
+				text-decoration: none;
+				font-weight: ;
+			}
+			#map-canvas a{
+				color: #B32C20;
+			}
+			#links {
+				background-color:rgba(208,236,195,0.2);
+				max-width:650px;
+				margin:auto;
+				padding:15px 5px;
+			}
+			#links img{
+				margin:0 10px;
+			}
+			#links a{
+				font-size:12px;
+				color: ;
+			}
+			#links p{
+				margin:5px 0 0 0;
+				font-size:12px;
+			}
+		</style>
+		<meta property="og:title" content="Tweets from Boston"/>
+		<meta property="og:url" content="http://vortex.starshipnexis.com/boston/"/>
+		<meta property="og:image" content="http://vortex.starshipnexis.com/boston/6-NEXIS-imagery.png"/>
+		<meta property="og:description" content="On April 15th, 2013, between 4:06pm-7:04pm EST, the Starship collected 509,795 tweets with the #BostonMarathon hashtag. Mapped are tweets from Boston, tagged with a location, and sent during that time. Together, we have a voice. #BostonStrong"/>
+		<meta property="fb:admins" content="1235700223"/>
+		<base target="_blank">
+	</head>
+	<body>
+		<h1>#BostonMarathon Tweets</h1>	
+		<p>On April 15th, 2013, between 4:06pm-7:04pm EST, the Starship collected 509,795 tweets with the #BostonMarathon hashtag.<br />Below are tweets from Boston, tagged with a location, and sent during that time. <span style="font-weight:700;">Together, we have a voice.</span></p>
+		  <!-- AddThis Button BEGIN -->
+<div class="addthis_toolbox addthis_default_style" style="width:360px;margin:auto;">
+<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+<a class="addthis_button_tweet"></a>
+<a class="addthis_button_pinterest_pinit"></a>
+<a class="addthis_counter addthis_pill_style"></a>
+</div>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-516065430d8ef150"></script>
+<!-- AddThis Button END -->
+<p id="pinsdropped"><span id="markersdropped">0</span> pins dropped <span id="replay" style="display:none;"><a href='#' onclick='replay();' target="_self">(replay animation)</a></span></p>
+    <div id="map-canvas" style="width:100%;height:500px;"></div>
+
+   		<p style="margin-bottom:40px;"><a href="https://twitter.com/search?q=%23bostonstrong" style="font-size:20px;">#BostonStrong</a></p>
+   		<div id="links">
+   		
+   		<a href="http://mashable.com/2013/04/20/boston-marathon-twitter-map/"><img src="mashable.png" style="border:0;height:30px;"></a>
+   		<a href="http://www.huffingtonpost.com/2013/04/20/boston-manhunt-details-police-chief-account_n_3123226.html#298_map-of-bostons-reaction-to-the-bombing-on-twitter"><img src="huffpo.png" style="border:0;height:30px;"></a>
+   		<a href="http://www.syracuse.com/news/index.ssf/2013/04/map_by_syracuse_university_pro.html"><img src="syrcom.png" style="border:0;height:30px;"></a>
+   		<p><a href="http://www.wxyz.com/dpp/news/map-shows-tweets-from-day-of-boston-marathon-bombings">ABC 7 - WXYZ (Detroit)</a> | <a href="http://www.berkshireeagle.com/ci_23070535/social-media-double-edged-source-marathon-manhunt-information">The Berkshire Eagle</a></p>
+   		</div>
+   		<p>A <a href="http://www.starshipnexis.com" target="_blank">Starship NEXIS</a> production by <a href="http://www.andrewbauer.info" target="_blank">Andrew Bauer</a>, created at the <a href="http://ischool.syr.edu" target="_blank">iSchool @ Syracuse University</a>. </p>
+<p style="font-size:12px;"><a href="https://www.dropbox.com/s/h8wezi2y6pzqfh4/041513_1606-1704_tweets.zip" style="font-size:12px;">Download full dataset (509,795 records)</a> - <a href="http://www.reddit.com/r/datasets/comments/1csdws/archive_of_all_tweets_sent_on_april_15th_between/"  style="font-size:12px;">Questions?</a></p>
+
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+ <script src="autolink-min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="markerclusterer_compiled.js"></script>
+    <script tyle="text/javascript" src="thetweets.js"></script>
+    <script>
+    var markercount, markersdropped,markerCluster;
+ 
+      var syracuse = new google.maps.LatLng(42.35222, -71.07387);
+     var map;
+      var markers = [];
+      var infowindow = new google.maps.InfoWindow({ content: "loading..." });
+      function initialize() {
+        var mapOptions = {
+          zoom: 14,
+          center: syracuse,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          scrollwheel: false
+        };
+        map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+            
+           
+
+		  var items = [], rand = 1000;
+		 $("#totalmarkers").html(thetweets.length);
+		       $(function(){$.each(thetweets, function(k,k1) {
+		 // console.log(k1);
+		   var place = new google.maps.LatLng(k1[0], k1[1]), date = new Date(k1[3]);
+		   var thedate = date.getHours() + ":" + date.getMinutes();
+		   //var rand = Math.floor(Math.random()*1500);
+		    rand = rand + 200;
+		    //console.log(k1[0]);
+		    setTimeout(function(){
+			    var themarker = addMarker(place);
+			    google.maps.event.addListener(marker, 'click', function() {
+				    //infowindow.setContent(date.toLocaleTimeString()+" <a href='http://www.twitter.com/"+k1[4]+"'>@"+k1[4]+"</a>: "+k1[2].autoLink());
+				    infowindow.setContent("loading...");
+				    $.getJSON('https://api.twitter.com/1/statuses/oembed.json?&id='+k1[5]+"&callback=?",function(r){ infowindow.setContent(k1[3]+"<br />"+r.html); }); 
+		          infowindow.open(map,themarker);
+		        });
+		    }, rand); 
+		  });
+		  });
+		 
+		  
+      var styles = [
+  {
+    stylers: [
+      { hue: "#fff" },
+      { saturation: -100 }
+    ]
+  },{
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [
+      { lightness: 20 },
+      { visibility: "simplified" }
+    ]
+  },{
+    featureType: "road",
+    elementType: "labels",
+    stylers: [
+      { visibility: "off" }
+    ]
+  }
+];
+
+map.setOptions({styles: styles});
+ markerCluster = new MarkerClusterer(map, markers);
+      }
+
+
+      function addMarker(location) {
+      markercount = parseInt($("#markersdropped").html());
+      $("#markersdropped").html(markercount+1);
+      if(markercount == 220) $("#replay").show();
+        marker = new google.maps.Marker({
+          position: location,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          icon: "http://maps.google.com/mapfiles/marker_black.png"
+        });
+        markers.push(marker);
+        markerCluster.addMarker(marker, true);
+        return marker;
+      }
+
+      
+      function replay(){
+      $("#replay").hide();
+      for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+        }
+        markers = [];
+        markerCluster.clearMarkers();
+        $("#markersdropped").html(0);
+		  var items = [], rand = 100;
+		 $("#totalmarkers").html(thetweets.length);
+		  $.each(thetweets, function(k,k1) {
+		 // console.log(k1);
+		   var place = new google.maps.LatLng(k1[0], k1[1]), date = new Date(k1[3]);
+		   var thedate = date.getHours() + ":" + date.getMinutes();
+		   //var rand = Math.floor(Math.random()*1500);
+		    rand = rand + 200;
+		    //console.log(k1[0]);
+		    setTimeout(function(){
+			    var themarker = addMarker(place);
+			    google.maps.event.addListener(marker, 'click', function() {
+				    //infowindow.setContent(date.toLocaleTimeString()+" <a href='http://www.twitter.com/"+k1[4]+"'>@"+k1[4]+"</a>: "+k1[2].autoLink());
+				    infowindow.setContent("loading...");
+				    $.getJSON('https://api.twitter.com/1/statuses/oembed.json?&id='+k1[5]+"&callback=?",function(r){ infowindow.setContent(k1[3]+"<br />"+r.html); }); 
+		          infowindow.open(map,themarker);
+		        });
+		    }, rand); 
+		  });
+		 
+		  
+      }
+
+
+      google.maps.event.addDomListener(window, 'load', initialize);    
+      
+
+      </script>
+      <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-557565-16']);
+  _gaq.push(['_setDomainName', 'starshipnexis.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+  </body>
+</html>
